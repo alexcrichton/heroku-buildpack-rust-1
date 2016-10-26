@@ -116,7 +116,7 @@ if [ $RUST_SKIP_BUILD -ne 1 ]; then
   cd "$BUILD_DIR"
   rm -rf target/
   cargo build
-  cp -r target/debug target/release
+  cp -r "$CARGO_TARGET_DIR/debug" "$CARGO_TARGET_DIR/release"
   cp -a "$CARGO_TARGET_DIR" target
 else
   echo "-----> Skipping Cargo build"
