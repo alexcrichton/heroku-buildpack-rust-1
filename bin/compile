@@ -74,16 +74,10 @@ EOF
 
 # Switch to our cache directory.
 mkdir -p "$CACHE_DIR"
+mkdir -p "$CARGO_HOME"
 cd "$CACHE_DIR"
 
-# Make sure we have an appropriate Rust toolchain installed.
-if [ -d "$CARGO_HOME" ]; then
-    echo "-----> Checking for new releases of Rust $VERSION channel"
-    # It's possible that $VERSION has changed, or the `stable` channel has updated.
-    rustup self update
-    rustup update "$VERSION"
-    rustup default "$VERSION"
-else
+if [ ! -f "$CARGO_HOME/bin/rustup" ]; then
     echo "-----> Downloading rustup"
     curl https://sh.rustup.rs -sSf > rustup.sh
     chmod u+x rustup.sh
@@ -91,6 +85,14 @@ else
     ./rustup.sh -y
     rm rustup.sh
 fi
+
+# Make sure we have an appropriate Rust toolchain installed.
+echo "-----> Checking for new releases of Rust $VERSION channel"
+# It's possible that $VERSION has changed, or the `stable` channel has updated.
+rustup self update
+rustup update "$VERSION"
+rustup default "$VERSION"
+
 if [ ! -x "$CARGO_HOME/bin/rustc" ]; then
   echo "failed: Cannot find Rust binaries at $CARGO_HOME"
   exit 1
